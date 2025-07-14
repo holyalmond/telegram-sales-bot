@@ -8,6 +8,8 @@ import requests
 
 from collections import Counter
 
+from config import SPREADSHEET_NAME
+
 scope = [
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive"
@@ -21,9 +23,9 @@ def get_curr_month_sheet():
     sheet_name = now.strftime("%m-%Y")
 
     try:
-        worksheet = client.open("SalesBot").worksheet(sheet_name)
+        worksheet = client.open(SPREADSHEET_NAME).worksheet(sheet_name)
     except gspread.exceptions.WorksheetNotFound:
-        worksheet = client.open("SalesBot").add_worksheet(title=sheet_name, rows="1000", cols="20")
+        worksheet = client.open(SPREADSHEET_NAME).add_worksheet(title=sheet_name, rows="1000", cols="20")
         worksheet.append_row(["Дата", "Время", "Товар", "Цена", "User ID", "Имя"])
 
     return worksheet
@@ -33,7 +35,7 @@ def get_sheet_by_date(date_str):
     sheet_name = date.strftime("%m-%Y")
 
     try:
-        worksheet = client.open("SalesBot").worksheet(sheet_name)
+        worksheet = client.open(SPREADSHEET_NAME).worksheet(sheet_name)
     except gspread.exceptions.WorksheetNotFound:
         return None
     
@@ -44,7 +46,7 @@ def get_sheet_by_month(month_str):
     sheet_name = date.strftime("%m-%Y")
 
     try:
-        worksheet = client.open("SalesBot").worksheet(sheet_name)
+        worksheet = client.open(SPREADSHEET_NAME).worksheet(sheet_name)
     except gspread.exceptions.WorksheetNotFound:
         return None
     
@@ -104,7 +106,7 @@ def get_month_summary(month_str):
     return sales, amount
     
 def get_year_summary(year_str):
-    sheet = client.open("SalesBot")
+    sheet = client.open(SPREADSHEET_NAME)
     worksheets = sheet.worksheets()
 
     sales = 0
@@ -141,7 +143,7 @@ def get_top_products(month_str=None):
 #### EXPORT ####
 
 def export_sheet_xlsx():
-    sheet = client.open("SalesBot")
+    sheet = client.open(SPREADSHEET_NAME)
     sheet_id = sheet.id
 
     export_url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=xlsx"
